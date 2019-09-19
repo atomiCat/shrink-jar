@@ -3,7 +3,8 @@
 **shrink.jar** 是一个可执行jar，你可以使用命令` java -jar shrink.jar jar文件 classList文件`来执行。  
 其中的参数：  
  `jar文件` 是你要精简的jar文件路径  
- `classList文件` 是一个txt文件，储存了需要保留的class列表。 
+ `classList文件` 是一个txt文件，储存了需要保留的class列表。   
+ ***不建议在企业级应用中使用！！！***  
  # 使用方法
  以windows平台为例，假如要精简 **helloWorld.jar**:  
  1. 找一个空文件夹，将**shrink.jar**和**helloWorld.jar**放到该文件夹。  
