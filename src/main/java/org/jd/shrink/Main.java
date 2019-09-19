@@ -24,7 +24,7 @@ public class Main {
      * [Loaded io.netty.channel.ChannelHandlerAdapter from file:/E:/git/http-proxy/security-http-proxy/target/proxy.jar]
      */
     public static void main(String[] a) throws Exception {
-
+        a = new String[]{"E:\\git\\shrink-jar\\target\\shrink.jar", "E:\\git\\shrink-jar\\target\\shrink.txt"};
         JarFile jar = new JarFile(a[0]);
         try (
                 FileReader classListReader = new FileReader(a[1]);
@@ -32,19 +32,25 @@ public class Main {
         ) {
             HashSet<String> names = new HashSet<>();
             for (String line : IOUtils.readLines(classListReader)) {
-                if (!line.endsWith("/proxy.jar]"))
-                    continue;
-                String[] split = StringUtils.split(line);
-                String name = StringUtils.replace(split[1], ".", "/") + ".class";
-                names.add(name);
+                if (line.startsWith("[Loaded") && line.endsWith("]")) {
+                    String[] split = StringUtils.split(line);
+                    String name = StringUtils.replace(split[1], ".", "/") + ".class";
+                    names.add(name);
+                }
             }
             Enumeration<JarEntry> entries = jar.entries();
-            int i = 0;
+            int all = 0, saved = 0;
             while (entries.hasMoreElements()) {
-                i++;
                 JarEntry entry = entries.nextElement();
                 String name = entry.getName();
-                if (name.startsWith("META-INF/") || name.indexOf('/') < 0 || names.contains(name)) {//META-INF/下的文件和根目录下的文件
+                boolean isClass = name.endsWith(".class");
+                if (isClass) {
+                    all++;
+                }
+                if (!isClass || names.contains(name)) {//META-INF/下的文件和根目录下的文件
+                    if (isClass) {
+                        saved++;
+                    }
                     JarEntry newEntry = new JarEntry(name);
                     jarOutputStream.putNextEntry(newEntry);
                     IOUtils.copy(jar.getInputStream(entry), jarOutputStream);
@@ -53,9 +59,7 @@ public class Main {
             }
             jarOutputStream.finish();
             jarOutputStream.flush();
-            System.out.println("精简完毕，共" + i + "个类，保留" + names.size() + "个类");
+            System.out.println("精简完毕：class共有 " + all + " 个，删除 " + (all - saved) + " 个，保留 " + saved + "个。");
         }
-
-
     }
 }
