@@ -24,7 +24,7 @@ public class Main {
      * [Loaded io.netty.channel.ChannelHandlerAdapter from file:/E:/git/http-proxy/security-http-proxy/target/proxy.jar]
      */
     public static void main(String[] a) throws Exception {
-        a = new String[]{"E:\\git\\shrink-jar\\target\\shrink.jar", "E:\\git\\shrink-jar\\target\\shrink.txt"};
+//        a = new String[]{"E:\\git\\shrink-jar\\target\\shrink.jar", "E:\\git\\shrink-jar\\target\\shrink.txt"};
         JarFile jar = new JarFile(a[0]);
         try (
                 FileReader classListReader = new FileReader(a[1]);
