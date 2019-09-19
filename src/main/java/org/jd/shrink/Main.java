@@ -3,8 +3,9 @@ package org.jd.shrink;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.jar.JarEntry;
@@ -26,12 +27,13 @@ public class Main {
     public static void main(String[] a) throws Exception {
 //        a = new String[]{"E:\\git\\shrink-jar\\target\\shrink.jar", "E:\\git\\shrink-jar\\target\\shrink.txt"};
         JarFile jar = new JarFile(a[0]);
+
         try (
-                FileReader classListReader = new FileReader(a[1]);
+                InputStream classListIn = new FileInputStream(a[1]);
                 JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(a[0] + ".shrunken.jar"))
         ) {
             HashSet<String> names = new HashSet<>();
-            for (String line : IOUtils.readLines(classListReader)) {
+            for (String line : IOUtils.readLines(classListIn)) {
                 if (line.startsWith("[Loaded") && line.endsWith("]")) {
                     String[] split = StringUtils.split(line);
                     String name = StringUtils.replace(split[1], ".", "/") + ".class";
