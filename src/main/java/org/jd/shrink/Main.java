@@ -51,8 +51,7 @@ public class Main {
                     if (isClass) {
                         saved++;
                     }
-                    JarEntry newEntry = new JarEntry(name);
-                    jarOutputStream.putNextEntry(newEntry);
+                    jarOutputStream.putNextEntry(new JarEntry(name));
                     IOUtils.copy(jar.getInputStream(entry), jarOutputStream);
                     jarOutputStream.closeEntry();
                 }
