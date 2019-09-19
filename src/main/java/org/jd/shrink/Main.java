@@ -3,6 +3,7 @@ package org.jd.shrink;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -26,11 +27,16 @@ public class Main {
      */
     public static void main(String[] a) throws Exception {
 //        a = new String[]{"E:\\git\\shrink-jar\\target\\shrink.jar", "E:\\git\\shrink-jar\\target\\shrink.txt"};
+        check(a.length == 2, "参数错误");
+        check(a[0].endsWith(".jar"), "jarFile 错误");
         JarFile jar = new JarFile(a[0]);
-
+        File out = new File(a[0].substring(0, a[0].length() - 4) + "_mini.jar");
+        for (int i = 1; out.exists(); i++) {
+            out = new File(a[0].substring(0, a[0].length() - 4) + "_mini" + i + ".jar");
+        }
         try (
                 InputStream classListIn = new FileInputStream(a[1]);
-                JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(a[0] + ".shrunken.jar"))
+                JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(out))
         ) {
             HashSet<String> names = new HashSet<>();
             for (String line : IOUtils.readLines(classListIn)) {
@@ -61,6 +67,12 @@ public class Main {
             jarOutputStream.finish();
             jarOutputStream.flush();
             System.out.println("精简完毕：class共有 " + all + " 个，删除 " + (all - saved) + " 个，保留 " + saved + "个。");
+        }
+    }
+
+    static void check(boolean expression, String message) {
+        if (!expression) {
+            throw new IllegalArgumentException(message);
         }
     }
 }
